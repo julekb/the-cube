@@ -2,20 +2,35 @@ import numpy as np
 from skimage import img_as_float
 from skimage.io import imshow
 import matplotlib.pyplot as plt
+import random as rand
 
 
 class cube:
     
-    def __init__(self, n=3):
+    def __init__(self, n=3, test=False):
         self.n = n
         
-        self.F = np.ones((n,n))
-        self.L = np.ones((n,n)) * 2
-        self.B = np.ones((n,n)) * 3
-        self.R = np.ones((n,n)) * 4
-        self.U = np.ones((n,n)) * 5
-        self.D = np.ones((n,n)) * 6
-        
+        if not test:
+	        self.F = np.ones((n,n))
+	        self.L = np.ones((n,n)) * 2
+	        self.B = np.ones((n,n)) * 3
+	        self.R = np.ones((n,n)) * 4
+	        self.U = np.ones((n,n)) * 5
+	        self.D = np.ones((n,n)) * 6
+
+        else:
+        	values_n = self.n**2*6
+        	values = np.array(range(0, values_n))
+        	values = values / values_n
+
+        	self.F = np.array(values[0:self.n**2].reshape((self.n, self.n)))
+        	self.L = np.array(values[self.n**2:self.n**2*2].reshape((self.n, self.n)))
+        	self.B = np.array(values[self.n**2*2:self.n**2*3].reshape((self.n, self.n)))
+        	self.R = np.array(values[self.n**2*3:self.n**2*4].reshape((self.n, self.n)))
+        	self.U = np.array(values[self.n**2*4:self.n**2*5].reshape((self.n, self.n)))
+        	self.D = np.array(values[self.n**2*5:self.n**2*6].reshape((self.n, self.n)))
+
+
         
     def move_U(self):
         # rotation of the upper layer clocklwise
@@ -35,7 +50,6 @@ class cube:
         self.F[0] = temp.pop()
         self.R[0] = temp.pop()
         self.U = np.rot90(self.U)
-
         
     def move_D(self):
         # rotation of the lower layer clockwise (looking from it's side)
@@ -98,18 +112,35 @@ class cube:
         self.U[-1,:] = temp.pop()
         self.L[:,-1] = temp.pop()
         self.D[0,:] = temp.pop()
-        self.R[0,:] = temp.pop()
+        self.R[:,0] = temp.pop()
         self.F = np.rot90(self.F)
         
     def move_FF(self):
         # rotation of the front layer anticlockwise
         temp = [np.copy(arr) for arr in [self.U[-1,:], self.R[0,:], self.D[0,:], self.L[:,-1]]]
         self.D[0,:] = temp.pop()
-        self.R[0,:] = temp.pop()
+        self.R[:,0] = temp.pop()
         self.U[-1,:] = temp.pop()
         self.L[:,-1] = temp.pop()
         self.F = np.rot90(self.F, k=3)
-        
+
+    def move_B(self):
+        #rotation of the back layer clockwise
+        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[-1,:], self.D[-1,:], self.L[:,0]]]	
+        self.D[-1,:] = temp.pop()
+        self.R[:,-1] = temp.pop()
+        self.U[0,:] = temp.pop()
+        self.L[:,0] = temp.pop()
+        self.B = np.rot90(self.B, k=3)
+
+    def move_BB(self):
+        #rotation of the back layer anticlockwise
+        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[-1,:], self.D[-1,:], self.L[:,0]]]	
+        self.U[0,:] = temp.pop()
+        self.L[:,0] = temp.pop()
+        self.D[-1,:] = temp.pop()
+        self.R[:,-1] = temp.pop()
+        self.B = np.rot90(self.B, k=3)
         
     def plot_horiz(self):
         
@@ -123,8 +154,7 @@ class cube:
         
         imshow(img)
         return img
-    
-    
+
     def plot_vert(self):
         
         img = np.zeros((self.n * 4, self.n * 3))
@@ -137,6 +167,14 @@ class cube:
         
         imshow(img)
         return img
-            
-        
+
+    def shuffle(self, k=100):
+    	# shuffling the cube
+	    moves = [self.move_D, self.move_DD, self.move_F, self.move_FF, self.move_U, self.move_UU,
+	             self.move_L, self.move_LL, self.move_R, self.move_RR]
+	    while  k > 0:
+	    	rand.choice(moves)()
+	    	k -= 1
+	        
+              
         
