@@ -21,7 +21,7 @@ class cube:
         else:
         	values_n = self.n**2*6
         	values = np.array(range(0, values_n))
-        	values = values / values_n
+        	# values = values / values_n
 
         	self.F = np.array(values[0:self.n**2].reshape((self.n, self.n)))
         	self.L = np.array(values[self.n**2:self.n**2*2].reshape((self.n, self.n)))
@@ -72,73 +72,73 @@ class cube:
 
     def move_L(self):
         # rotation of the left layer clockwise
-        temp = [np.copy(arr) for arr in [self.F[:,0], self.D[:,0], self.B[:,-1][::-1], self.U[:,0]]]
+        temp = [np.copy(arr) for arr in [self.F[:,0], self.D[:,0], self.B[:,-1], self.U[:,0]]]
         self.F[:,0] = temp.pop()
-        self.U[:,0] = temp.pop()
+        self.U[:,0] = temp.pop()[::-1]
         self.B[:,-1] = temp.pop()[::-1]
         self.D[:,0] = temp.pop()
-        self.L = np.rot90(self.L)
+        self.L = np.rot90(self.L, k=3)
         
     def move_LL(self):
         # rotation of the left layer anticlockwise
-        temp = [np.copy(arr) for arr in [self.F[:,0], self.D[:,0], self.B[:,-1][::-1], self.U[:,0]]]
+        temp = [np.copy(arr) for arr in [self.F[:,0], self.D[:,0], self.B[:,-1], self.U[:,0]]]
         self.B[:,-1] = temp.pop()[::-1]
-        self.D[:,0] = temp.pop()
+        self.D[:,0] = temp.pop()[::-1]
         self.F[:,0] = temp.pop()
         self.U[:,0] = temp.pop()
-        self.L = np.rot90(self.L, k=3)
+        self.L = np.rot90(self.L)
         
     def move_R(self):
         # rotation of the right layer clockwise
-        temp = [np.copy(arr) for arr in [self.F[:,-1], self.D[:,-1], self.B[:,0][::-1], self.U[:,-1]]]
+        temp = [np.copy(arr) for arr in [self.F[:,-1], self.D[:,-1], self.B[:,0], self.U[:,-1]]]
         self.B[:,0] = temp.pop()[::-1]
-        self.D[:,-1] = temp.pop()
+        self.D[:,-1] = temp.pop()[::-1]
         self.F[:,-1] = temp.pop()
         self.U[:,-1] = temp.pop()
-        self.L = np.rot90(self.L, k=3)
+        self.R = np.rot90(self.R, k=3)
         
     def move_RR(self):
         # rotation of the right layer anticlockwise
-        temp = [np.copy(arr) for arr in [self.F[:,-1], self.D[:,-1], self.B[:,-0][::-1], self.U[:,-1]]]
+        temp = [np.copy(arr) for arr in [self.F[:,-1], self.D[:,-1], self.B[:,-0], self.U[:,-1]]]
         self.F[:,-1] = temp.pop()
-        self.U[:,-1] = temp.pop()
+        self.U[:,-1] = temp.pop()[::-1]
         self.B[:,0] = temp.pop()[::-1]
         self.D[:,-1] = temp.pop()
-        self.L = np.rot90(self.L)
+        self.R = np.rot90(self.R)
         
     def move_F(self):
         # rotation of the front layer clockwise
-        temp = [np.copy(arr) for arr in [self.U[-1,:], self.R[0,:], self.D[0,:], self.L[:,-1]]]
-        self.U[-1,:] = temp.pop()
+        temp = [np.copy(arr) for arr in [self.U[-1,:], self.R[:,0], self.D[0,:], self.L[:,-1]]]
+        self.U[-1,:] = temp.pop()[::-1]
         self.L[:,-1] = temp.pop()
-        self.D[0,:] = temp.pop()
+        self.D[0,:] = temp.pop()[::-1]
         self.R[:,0] = temp.pop()
-        self.F = np.rot90(self.F)
+        self.F = np.rot90(self.F, k=3)
         
     def move_FF(self):
         # rotation of the front layer anticlockwise
-        temp = [np.copy(arr) for arr in [self.U[-1,:], self.R[0,:], self.D[0,:], self.L[:,-1]]]
+        temp = [np.copy(arr) for arr in [self.U[-1,:], self.R[:,0], self.D[0,:], self.L[:,-1]]]
         self.D[0,:] = temp.pop()
-        self.R[:,0] = temp.pop()
+        self.R[:,0] = temp.pop()[::-1]
         self.U[-1,:] = temp.pop()
-        self.L[:,-1] = temp.pop()
-        self.F = np.rot90(self.F, k=3)
+        self.L[:,-1] = temp.pop()[::-1]
+        self.F = np.rot90(self.F)
 
     def move_B(self):
         #rotation of the back layer clockwise
-        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[-1,:], self.D[-1,:], self.L[:,0]]]	
+        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[:,-1], self.D[-1,:], self.L[:,0]]]	
         self.D[-1,:] = temp.pop()
-        self.R[:,-1] = temp.pop()
+        self.R[:,-1] = temp.pop()[::-1]
         self.U[0,:] = temp.pop()
-        self.L[:,0] = temp.pop()
+        self.L[:,0] = temp.pop()[::-1]
         self.B = np.rot90(self.B, k=3)
 
     def move_BB(self):
         #rotation of the back layer anticlockwise
-        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[-1,:], self.D[-1,:], self.L[:,0]]]	
-        self.U[0,:] = temp.pop()
+        temp = [np.copy(arr) for arr in [self.U[0,:], self.R[:,-1], self.D[-1,:], self.L[:,0]]]	
+        self.U[0,:] = temp.pop()[::-1]
         self.L[:,0] = temp.pop()
-        self.D[-1,:] = temp.pop()
+        self.D[-1,:] = temp.pop()[::-1]
         self.R[:,-1] = temp.pop()
         self.B = np.rot90(self.B, k=3)
         
@@ -167,6 +167,15 @@ class cube:
         
         imshow(img)
         return img
+
+    def plot_numb(self, vert=False):
+
+    	if vert:
+    		img = self.plot_vert()
+    	else:
+    		img = self.plot_horiz()
+    	for row in img:
+    		print(str(row))
 
     def shuffle(self, k=100):
     	# shuffling the cube
