@@ -184,6 +184,15 @@ class cube:
 	    while  k > 0:
 	    	rand.choice(moves)()
 	    	k -= 1
+	    return
+
+    def is_solved(self):
+	# checking if the cube is solved
+    	if len(np.unique(self.F)) != 1:
+    		return False
+    	if len(np.unique(self.L)) == 1 and len(np.unique(self.B)) == 1 and len(np.unique(self.R)) == 1 and len(np.unique(self.U)) == 1:
+    		return True
+    	return False
 	        
               
         
